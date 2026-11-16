@@ -1,0 +1,6 @@
+:root { color-scheme: light; }
+body { background: #f7f8fa; min-height: 100vh; }
+.hero { background: #e8f0e9; color: #203b2b; }
+.stat-card { border: 0; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+.card { border: 1px solid #e8eaed; }
+.form-label { font-weight: 600; }
