@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Empréstimos | Refúgio Literário{% endblock %}
+{% block content %}
+<h1 class="h2 mb-4">Empréstimos e devoluções</h1>
+<div class="card mb-4"><div class="card-body">
+  <h2 class="h5">Registrar empréstimo</h2>
+  {% if livros and participantes %}
+  <form method="post" class="row g-3">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="col-md-5"><label class="form-label" for="livro_id">Livro *</label><select class="form-select" id="livro_id" name="livro_id" required><option value="">Selecione</option>{% for livro in livros %}<option value="{{ livro.id }}" {% if livro.disponiveis < 1 %}disabled{% endif %}>{{ livro.titulo }} ({{ livro.disponiveis }} disponíveis)</option>{% endfor %}</select></div>
+    <div class="col-md-4"><label class="form-label" for="participante_id">Participante *</label><select class="form-select" id="participante_id" name="participante_id" required><option value="">Selecione</option>{% for participante in participantes %}<option value="{{ participante.id }}">{{ participante.nome }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><label class="form-label" for="data_prevista_devolucao">Devolução prevista *</label><input class="form-control" type="date" id="data_prevista_devolucao" name="data_prevista_devolucao" min="{{ sugestao_devolucao.isoformat() }}" value="{{ sugestao_devolucao.isoformat() }}" required></div>
+    <div class="col-12"><button class="btn btn-primary">Registrar empréstimo</button></div>
+  </form>
+  {% else %}<p class="text-secondary mb-0">Cadastre pelo menos um livro e um participante antes de registrar empréstimos.</p>{% endif %}
+</div></div>
+<div class="card"><div class="card-body">
+  <h2 class="h5">Histórico de empréstimos</h2>
+  <div class="table-responsive"><table class="table table-striped align-middle">
+    <thead><tr><th>Livro</th><th>Participante</th><th>Empréstimo</th><th>Prazo</th><th>Status</th><th>Ação</th></tr></thead>
+    <tbody>{% for item in emprestimos %}
+      <tr><td>{{ item.livro.titulo }}</td><td>{{ item.participante.nome }}</td><td>{{ item.data_emprestimo.strftime("%d/%m/%Y") }}</td><td>{{ item.data_prevista_devolucao.strftime("%d/%m/%Y") }}</td><td>{% if item.data_devolucao %}<span class="badge text-bg-success">Devolvido</span>{% elif item.esta_atrasado %}<span class="badge text-bg-danger">Atrasado</span>{% else %}<span class="badge text-bg-warning">Em aberto</span>{% endif %}</td><td>{% if not item.data_devolucao %}<form method="post" action="{{ url_for('main.devolver_emprestimo', emprestimo_id=item.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-outline-success">Registrar devolução</button></form>{% else %}—{% endif %}</td></tr>
+    {% else %}<tr><td colspan="6" class="text-center text-secondary">Nenhum empréstimo registrado.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div></div>
+{% endblock %}

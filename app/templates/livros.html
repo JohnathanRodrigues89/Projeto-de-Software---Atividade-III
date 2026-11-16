@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Livros | Refúgio Literário{% endblock %}
+{% block content %}
+<h1 class="h2 mb-4">Gerenciamento de livros</h1>
+<div class="card mb-4"><div class="card-body">
+  <h2 class="h5">Cadastrar livro</h2>
+  <form method="post" class="row g-3">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="col-md-5"><label class="form-label" for="titulo">Título *</label><input class="form-control" id="titulo" name="titulo" maxlength="150" required></div>
+    <div class="col-md-4"><label class="form-label" for="autor">Autor *</label><input class="form-control" id="autor" name="autor" maxlength="120" required></div>
+    <div class="col-md-3"><label class="form-label" for="isbn">ISBN</label><input class="form-control" id="isbn" name="isbn" maxlength="20"></div>
+    <div class="col-md-5"><label class="form-label" for="categoria">Categoria</label><input class="form-control" id="categoria" name="categoria" maxlength="80"></div>
+    <div class="col-md-3"><label class="form-label" for="quantidade">Quantidade *</label><input class="form-control" type="number" min="1" id="quantidade" name="quantidade" value="1" required></div>
+    <div class="col-12"><button class="btn btn-primary">Cadastrar livro</button></div>
+  </form>
+</div></div>
+<div class="card"><div class="card-body">
+  <h2 class="h5">Acervo</h2>
+  <div class="table-responsive"><table class="table table-striped align-middle">
+    <thead><tr><th>Título</th><th>Autor</th><th>Categoria</th><th>Exemplares disponíveis</th><th>Ação</th></tr></thead>
+    <tbody>{% for livro in livros %}
+      <tr><td>{{ livro.titulo }}</td><td>{{ livro.autor }}</td><td>{{ livro.categoria or "—" }}</td><td>{{ livro.disponiveis }} / {{ livro.quantidade }}</td><td>
+        <form method="post" action="{{ url_for('main.excluir_livro', livro_id=livro.id) }}" onsubmit="return confirm('Excluir este livro?')">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-outline-danger">Excluir</button>
+        </form>
+      </td></tr>
+    {% else %}<tr><td colspan="5" class="text-center text-secondary">Nenhum livro cadastrado.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div></div>
+{% endblock %}
