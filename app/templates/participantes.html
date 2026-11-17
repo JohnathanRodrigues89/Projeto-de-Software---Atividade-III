@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Participantes | Refúgio Literário{% endblock %}
+{% block content %}
+<h1 class="h2 mb-4">Gerenciamento de participantes</h1>
+<div class="card mb-4"><div class="card-body">
+  <h2 class="h5">Cadastrar participante</h2>
+  <form method="post" class="row g-3">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="col-md-5"><label class="form-label" for="nome">Nome *</label><input class="form-control" id="nome" name="nome" maxlength="120" required></div>
+    <div class="col-md-4"><label class="form-label" for="email">E-mail</label><input class="form-control" type="email" id="email" name="email" maxlength="150"></div>
+    <div class="col-md-3"><label class="form-label" for="telefone">Telefone</label><input class="form-control" id="telefone" name="telefone" maxlength="30"></div>
+    <div class="col-12"><button class="btn btn-primary">Cadastrar participante</button></div>
+  </form>
+</div></div>
+<div class="card"><div class="card-body">
+  <h2 class="h5">Participantes cadastrados</h2>
+  <div class="table-responsive"><table class="table table-striped align-middle">
+    <thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ação</th></tr></thead>
+    <tbody>{% for participante in participantes %}
+      <tr><td>{{ participante.nome }}</td><td>{{ participante.email or "—" }}</td><td>{{ participante.telefone or "—" }}</td><td>
+        <form method="post" action="{{ url_for('main.excluir_participante', participante_id=participante.id) }}" onsubmit="return confirm('Excluir este participante?')">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-outline-danger">Excluir</button>
+        </form>
+      </td></tr>
+    {% else %}<tr><td colspan="4" class="text-center text-secondary">Nenhum participante cadastrado.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div></div>
+{% endblock %}
